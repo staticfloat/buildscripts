@@ -1,7 +1,6 @@
 #/bin/bash
 
 # This script will download/compile the latest gnuradio in ~/src/gnuradio/, and install it to ~/local/
-
 if [[ -z "$(which brew)" ]]; then
     echo "ERROR: You need to have installed Homebrew!"
     exit 1
@@ -13,7 +12,7 @@ brew install git cmake python
 prefix=~/local
 src=~/src/gnuradio
 
-# Get our python parameters here so we can pass them explicitly in do_cmake_build
+# Get our python parameters and tack them onto the end of CMAKE_FLAGS
 PY_EXE=$(which python)
 PY_LIB=$(otool -L $(which python) | grep Python | awk '{print $1}')
 PY_HEAD=$(dirname $PY_LIB)/Headers
@@ -37,8 +36,6 @@ clone_and_pull gr-foo https://github.com/bastibl/gr-foo.git
 brew install boost libusb
 pip install cheetah mako
 do_cmake_build "$src/uhd/host"
-
-
 do_cmake_build "$src/bladeRF/host"
 
 # Now, compile gnuradio installing dependencies as needed
@@ -49,17 +46,11 @@ do_cmake_build "$src/gnuradio"
 
 
 # Now that we've got gnuradio, let's do gr-osmosdr, gr-foo and then gr-ieee802-11
+brew install cppunit itpp log4cpp
 do_cmake_build "$src/gr-osmosdr"
-
-
-brew install cppunit
 do_cmake_build "$src/gr-foo"
-
-
-brew install itpp log4cpp
 do_cmake_build "$src/gr-ieee802-11"
 
-
-# Let's try gr-fosphor just for function
+# I can't live without my beautiful fosphor
 pip install pyopengl
 do_cmake_build "$src/gr-fosphor"

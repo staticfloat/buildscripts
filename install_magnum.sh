@@ -1,7 +1,6 @@
 #/bin/bash
 
-# This script will download/compile the latest gnuradio in ~/src/gnuradio/, and install it to ~/local/
-
+# This script will download/compile the latest magnum in ~/src/gnuradio/, and install it to ~/local/
 if [[ -z "$(which brew)" ]]; then
     echo "ERROR: You need to have installed Homebrew!"
     exit 1
@@ -25,6 +24,8 @@ clone_and_pull corrade https://github.com/mosra/corrade.git
 clone_and_pull magnum-plugins https://github.com/mosra/magnum-plugins.git
 clone_and_pull magnum-integration https://github.com/mosra/magnum-integration.git
 clone_and_pull magnum-examples https://github.com/mosra/magnum-examples.git
+
+# These don't really install like the others, let's just ignore them for now
 #clone_and_pull magnum-extras https://github.com/mosra/magnum-extras.git
 #clone_and_pull magnum-inspector https://github.com/wivlaro/magnum-inspector.git
 

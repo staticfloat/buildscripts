@@ -8,6 +8,7 @@ function confirm
 }
 
 
+# Usage: do_cmake_build [source_folder]
 function do_cmake_build
 {
     if [[ ! -z "$1" ]]; then
@@ -32,6 +33,7 @@ function do_cmake_build
     make install -j4
 }
 
+# Usage: clone_and_pull <folder_name> <clone_url> [branch]
 function clone_and_pull
 {
     if [[ ! -d "$1" ]]; then
