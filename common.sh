@@ -46,3 +46,52 @@ function clone_and_pull
     (cd "$1" && git pull --recurse-submodules)
     (cd "$1" && git submodule update --recursive)
 }
+
+function pkg_install_error_msg
+{
+	cat <<-EOF
+		ERROR: $1 not found, highly recommended in order to use this script!
+		If you will not/cannot use a package manager I understand, then run:
+
+		`export SKIP_DEPENDENCY_INSTALLATION=yes`
+
+		before running this script to skip all library installations.
+		You will have to install all dependencies manually. Look for lines that
+		say 'Explicitly skipping dependency installation of <foo>' to see what
+		external dependencies are needed on your system.
+	EOF
+}
+
+# Usage: pkg_install <pkg1> [pkg2...]
+function pkg_install
+{
+	# If the user is explicitly asking us to skip this, then skip it!
+    if [[ ! -z "$SKIP_DEPENDENCY_INSTALLATION" ]]; then
+		echo "Explicitly skipping dependency installation of $*"
+        return
+    fi
+
+    # Figure out our platform, and whether we have the right tools
+    OS_NAME=$(uname -s)
+    if [[ "$OS_NAME" == "Darwin" ]]; then
+        if [[ -z $(which brew) ]]; then
+			pkg_install_error_msg "brew"
+			echo "You can install Homebrew from http://brew.sh"
+			exit
+        fi
+
+		brew install $*
+	elif [[ "$OS_NAME" == "Linux" ]]; then
+		if [[ ! -z $(apt-get) ]]; then
+			sudo apt-get install -y $*
+		elif [[ ! -z $(yum) ]]; then
+			sudo yum install -y $*
+		else
+			pkg_install_error_msg "package manager"
+			exit
+		fi
+	else
+		pkg_install_error_msg "supported OS"
+		exit
+    fi
+}
