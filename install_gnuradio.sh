@@ -13,9 +13,15 @@ src=~/src/gnuradio
 
 # Get our python parameters and tack them onto the end of CMAKE_FLAGS
 PY_EXE=$(which python)
-PY_LIB=$(otool -L $(which python) | grep Python | awk '{print $1}')
-PY_HEAD=$(dirname $PY_LIB)/Headers
-CMAKE_FLAGS="-DPYTHON_EXECUTABLE=$PY_EXE -DPYTHON_LIBRARY=$PY_LIB -DPYTHON_INCLUDE_DIR=$PY_HEAD -DCMAKE_INSTALL_PREFIX=$prefix"
+CMAKE_FLAGS="-DPYTHON_EXECUTABLE=$PY_EXE"
+
+# If we're running on OSX, add in these Python flags so we don't pick up Homebrew Python or somesuch
+if [[ $(uname -s) == "Darwin" ]]; then
+    PY_LIB=$(otool -L $(which python) | grep Python | awk '{print $1}')
+    PY_HEAD=$(dirname $PY_LIB)/Headers
+    CMAKE_FLAGS="$CMAKE_FLAGS -DPYTHON_LIBRARY=$PY_LIB -DPYTHON_INCLUDE_DIR=$PY_HEAD"
+fi
+CMAKE_FLAGS="$CMAKE_FLAGS -DCMAKE_INSTALL_PREFIX=$prefix"
 
 # First, clone and update all repositories
 mkdir -p $src; cd $src
