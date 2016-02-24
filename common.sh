@@ -95,3 +95,55 @@ function pkg_install
 		exit
     fi
 }
+
+function apt_map
+{
+	M=""
+	for name in $*; do
+		case $name in
+		pip)
+			M="$M python-pip"
+			;;
+		boost)
+			M="$M libboost-dev"
+			;;
+		libusb)
+			M="$M libusb-1.0-0-dev"
+			;;
+		pygtk)
+			M="$M python-gtk2-dev"
+			;;
+		wxpython)
+			M="$M python-wxgtk2.8"
+			;;
+		cppunit)
+			M="$M libcppunit-dev"
+			;;
+		itpp)
+			M="$M libitpp-dev"
+			;;
+		log4cpp)
+			M="$M liblog4cpp5-dev"
+			;;
+		*)
+			M="$M $name"
+			;;
+		esac
+	done
+	echo $M
+}
+
+function pip_install
+{
+	# Install pip if we don't have it on our Linux box
+	if [[ $(uname -s) == "Linux" && -z $(which pip) ]]; then
+		pkg_install pip
+	fi
+
+	# Don't use sudo if we're on OSX
+	if [[ $(uname -s) == "Darwin" ]]; then
+		pip install $*
+	else
+		sudo pip install $*
+	fi
+}

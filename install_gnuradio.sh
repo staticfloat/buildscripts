@@ -36,14 +36,14 @@ clone_and_pull gr-foo https://github.com/bastibl/gr-foo.git
 
 # Start off by compiling uhd and bladeRF
 pkg_install boost libusb
-pip install cheetah mako
+pip_install cheetah mako
 do_cmake_build "$src/uhd/host"
 do_cmake_build "$src/bladeRF/host"
 
 # Now, compile gnuradio installing dependencies as needed
 pkg_install wxpython pygtk
 pkg_install zeromq swig fftw orc
-pip install pyzmq lxml numpy
+pip_install pyzmq lxml numpy
 do_cmake_build "$src/gnuradio"
 
 
@@ -55,5 +55,5 @@ do_cmake_build "$src/gr-ieee802-11"
 
 # I can't live without my beautiful fosphor
 CMAKE_FLAGS="$CMAKE_FLAGS -DFREETYPE2_INCLUDE_DIRS=/usr/local/include/freetype2/ -DFREETYPE2_FOUND=True -DFREETYPE2_LIBRARIES=-lfreetype"
-pip install pyopengl
+pip_install pyopengl
 do_cmake_build "$src/gr-fosphor"
