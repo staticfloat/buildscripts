@@ -62,40 +62,8 @@ function pkg_install_error_msg
 	EOF
 }
 
-# Usage: pkg_install <pkg1> [pkg2...]
-function pkg_install
-{
-	# If the user is explicitly asking us to skip this, then skip it!
-    if [[ ! -z "$SKIP_DEPENDENCY_INSTALLATION" ]]; then
-		echo "Explicitly skipping dependency installation of $*"
-        return
-    fi
-
-    # Figure out our platform, and whether we have the right tools
-    OS_NAME=$(uname -s)
-    if [[ "$OS_NAME" == "Darwin" ]]; then
-        if [[ -z $(which brew) ]]; then
-			pkg_install_error_msg "brew"
-			echo "You can install Homebrew from http://brew.sh"
-			exit
-        fi
-
-		brew install $*
-	elif [[ "$OS_NAME" == "Linux" ]]; then
-		if [[ ! -z $(apt-get) ]]; then
-			sudo apt-get install -y $*
-		elif [[ ! -z $(yum) ]]; then
-			sudo yum install -y $*
-		else
-			pkg_install_error_msg "package manager"
-			exit
-		fi
-	else
-		pkg_install_error_msg "supported OS"
-		exit
-    fi
-}
-
+# Maps names from a Homebrew-style name to an apt-get-style name
+# Usage: apt_map <pkg1> [pkg2...]
 function apt_map
 {
 	M=""
@@ -131,6 +99,40 @@ function apt_map
 		esac
 	done
 	echo $M
+}
+
+# Usage: pkg_install <pkg1> [pkg2...]
+function pkg_install
+{
+	# If the user is explicitly asking us to skip this, then skip it!
+    if [[ ! -z "$SKIP_DEPENDENCY_INSTALLATION" ]]; then
+		echo "Explicitly skipping dependency installation of $*"
+        return
+    fi
+
+    # Figure out our platform, and whether we have the right tools
+    OS_NAME=$(uname -s)
+    if [[ "$OS_NAME" == "Darwin" ]]; then
+        if [[ -z $(which brew) ]]; then
+			pkg_install_error_msg "brew"
+			echo "You can install Homebrew from http://brew.sh"
+			exit
+        fi
+
+		brew install $*
+	elif [[ "$OS_NAME" == "Linux" ]]; then
+		if [[ ! -z $(apt-get) ]]; then
+			sudo apt-get install -y $(apt_map $*)
+		elif [[ ! -z $(yum) ]]; then
+			sudo yum install -y $*
+		else
+			pkg_install_error_msg "package manager"
+			exit
+		fi
+	else
+		pkg_install_error_msg "supported OS"
+		exit
+    fi
 }
 
 function pip_install
