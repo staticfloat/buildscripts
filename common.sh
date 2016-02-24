@@ -93,6 +93,15 @@ function apt_map
 		log4cpp)
 			M="$M liblog4cpp5-dev"
 			;;
+		fftw)
+			M="$M libfftw3-dev"
+			;;
+		zeromq)
+			M="$M libzmq-dev"
+			;;
+		orc)
+			M="$M liborc-0.4-dev"
+			;;
 		*)
 			M="$M $name"
 			;;

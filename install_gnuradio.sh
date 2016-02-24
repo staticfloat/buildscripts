@@ -28,10 +28,12 @@ mkdir -p $src; cd $src
 clone_and_pull bladeRF https://github.com/Nuand/bladeRF.git libbladeRF_v1.4.3
 clone_and_pull gnuradio https://github.com/gnuradio/gnuradio.git
 clone_and_pull uhd https://github.com/EttusResearch/uhd.git release_003_009_001
-clone_and_pull gr-ieee802-11 https://github.com/bastibl/gr-ieee802-11.git
 clone_and_pull gr-osmosdr git://git.osmocom.org/gr-osmosdr.git
+
+# These are highly optional, I just include them 'cause they're awesome.
 clone_and_pull gr-fosphor git://git.osmocom.org/gr-fosphor.git
 clone_and_pull gr-foo https://github.com/bastibl/gr-foo.git
+clone_and_pull gr-ieee802-11 https://github.com/bastibl/gr-ieee802-11.git
 
 
 # Start off by compiling uhd and bladeRF
@@ -48,6 +50,7 @@ do_cmake_build "$src/gnuradio"
 
 
 # Now that we've got gnuradio, let's do gr-osmosdr, gr-foo and then gr-ieee802-11
+# Note that these are highly optional and I only include them because they are awesome.
 pkg_install cppunit itpp log4cpp
 do_cmake_build "$src/gr-osmosdr"
 do_cmake_build "$src/gr-foo"
