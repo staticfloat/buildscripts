@@ -73,7 +73,7 @@ function apt_map
 			M="$M python-pip"
 			;;
 		boost)
-			M="$M libboost-dev"
+			M="$M libboost-all-dev"
 			;;
 		libusb)
 			M="$M libusb-1.0-0-dev"
