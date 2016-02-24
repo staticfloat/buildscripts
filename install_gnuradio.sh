@@ -58,5 +58,8 @@ do_cmake_build "$src/gr-ieee802-11"
 
 # I can't live without my beautiful fosphor
 CMAKE_FLAGS="$CMAKE_FLAGS -DFREETYPE2_INCLUDE_DIRS=/usr/local/include/freetype2/ -DFREETYPE2_FOUND=True -DFREETYPE2_LIBRARIES=-lfreetype"
+if [[ $(uname -s) == "Linux" ]]; then
+    pkg_install libgl1-mesa-dev
+fi
 pip_install pyopengl
 do_cmake_build "$src/gr-fosphor"
