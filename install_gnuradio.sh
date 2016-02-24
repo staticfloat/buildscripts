@@ -1,10 +1,6 @@
 #/bin/bash
 
 # This script will download/compile the latest gnuradio in ~/src/gnuradio/, and install it to ~/local/
-if [[ -z "$(which brew)" ]]; then
-    echo "ERROR: You need to have installed Homebrew!"
-    exit 1
-fi
 
 # Bring in our common tools
 source common.sh
