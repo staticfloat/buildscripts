@@ -51,7 +51,7 @@ do_cmake_build "$src/gnuradio"
 
 # Now that we've got gnuradio, let's do gr-osmosdr, gr-foo and then gr-ieee802-11
 # Note that these are highly optional and I only include them because they are awesome.
-pkg_install cppunit itpp log4cpp
+pkg_install cppunit itpp log4cpp librtlsdr
 do_cmake_build "$src/gr-osmosdr"
 do_cmake_build "$src/gr-foo"
 do_cmake_build "$src/gr-ieee802-11"

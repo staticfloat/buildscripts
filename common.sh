@@ -102,6 +102,9 @@ function apt_map
 		orc)
 			M="$M liborc-0.4-dev"
 			;;
+        librtlsdr)
+            M="$M librtlsdr-dev"
+            ;;
 		*)
 			M="$M $name"
 			;;
