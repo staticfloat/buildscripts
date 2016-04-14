@@ -25,7 +25,7 @@ CMAKE_FLAGS="$CMAKE_FLAGS -DCMAKE_INSTALL_PREFIX=$prefix"
 
 # First, clone and update all repositories
 mkdir -p $src; cd $src
-clone_and_pull bladeRF https://github.com/Nuand/bladeRF.git libbladeRF_v1.4.3
+clone_and_pull bladeRF https://github.com/Nuand/bladeRF.git libbladeRF_v1.6.1
 clone_and_pull gnuradio https://github.com/gnuradio/gnuradio.git
 clone_and_pull uhd https://github.com/EttusResearch/uhd.git release_003_009_001
 clone_and_pull gr-osmosdr git://git.osmocom.org/gr-osmosdr.git
