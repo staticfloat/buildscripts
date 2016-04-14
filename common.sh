@@ -2,7 +2,7 @@
 
 function confirm
 {
-    read -p "Does this look okay? [y/n] "
+    read -p " [y/n] "
     [[ $REPLY =~ ^[Yy]$ ]]
     return
 }
@@ -24,13 +24,24 @@ function do_cmake_build
         echo "Doing cmake build in $(pwd)"
         echo cmake $CMAKE_FLAGS ..
         cmake $CMAKE_FLAGS ..
+        echo -n "Does this look okay?"
         if [[ -z "$SKIP_CMAKE_CONFIRMATION" ]] && ! confirm; then
             cd ..
             rm -rf build
             exit
         fi
     fi
-    make install -j4
+    if ! make install -j4; then
+        echo "make build in $(pwd) failed"
+        if [[ -z "$SKIP_AUTOCLEAN_PROMPT" ]]; then
+            echo "Should I auto-clean and try again?"
+            if confirm; then
+                cd ..
+                rm -rf build
+                do_cmake_build "$1"
+            fi
+        fi
+    fi
 }
 
 # Usage: clone_and_pull <folder_name> <clone_url> [branch]
