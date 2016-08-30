@@ -9,7 +9,7 @@ fi
 prefix=~/local
 src=~/src/magnum
 CMAKE_FLAGS="-DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_INSTALL_RPATH=$prefix/lib"
-for feature in SDL2APPLICATION AUDIO BULLET TGAIMPORTER WAVAUDIOIMPORTER DISTANCEFIELDCONVERTER OBJIMPORTER; do
+for feature in SDL2APPLICATION GLFWAPPLICATION CGLCONTEXT WINDOWLESSCGLAPPLICATION AUDIO BULLET TGAIMPORTER WAVAUDIOIMPORTER DISTANCEFIELDCONVERTER OBJIMPORTER; do
     CMAKE_FLAGS="$CMAKE_FLAGS -DWITH_$feature=ON"
 done
 
@@ -17,7 +17,7 @@ done
 source common.sh
 
 # Install some prerequisites
-brew install git cmake sdl2 bullet freetype qt
+brew install git cmake sdl2 bullet freetype qt glfw3
 
 # First, clone and update all repositories
 mkdir -p $src; cd $src
@@ -33,21 +33,21 @@ clone_and_pull magnum-examples https://github.com/mosra/magnum-examples.git
 
 
 # Start off by compiling corrade and magnum
-do_cmake_build "$src/corrade"
-do_cmake_build "$src/magnum"
+do_cmake_build "$src/corrade" $CMAKE_FLAGS
+do_cmake_build "$src/magnum" $CMAKE_FLAGS
 
 # Now, compile integration and plugins
-do_cmake_build "$src/magnum-integration"
+do_cmake_build "$src/magnum-integration" $CMAKE_FLAGS
 
 OLD_CMAKE_FLAGS=$CMAKE_FLAGS
 for plugin in ANYAUDIOIMPORTER ANYIMAGECONVERTER ANYSCENEIMPORTER COLLADAIMPORTER HARFBUZZFONT JPEGIMPORTER OPENGEXIMPORTER PNGIMPORTER STANFORDIMPORTER STBIMAGEIMPORTER STBPNGIMAGECONVERTER STBVORBISAUDIOIMPORTER; do
     CMAKE_FLAGS="$CMAKE_FLAGS -DWITH_${plugin}=ON"
 done
-do_cmake_build "$src/magnum-plugins"
+do_cmake_build "$src/magnum-plugins" $CMAKE_FLAGS
 CMAKE_FLAGS=$OLD_CMAKE_FLAGS
 
 # Finish up with the examples
 for plugin in AUDIO BULLET CUBEMAP MOTIONBLUR PICKING PRIMITIVES TEXT TEXTUREDTRIANGLE TRIANLGE VIEWER; do
     CMAKE_FLAGS="$CMAKE_FLAGS -DWITH_${plugin}_EXAMPLE=ON"
 done
-do_cmake_build "$src/magnum-examples"
+do_cmake_build "$src/magnum-examples" $CMAKE_FLAGS

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Thank you Stack Overflow! 
+NUM_CORES=$(getconf _NPROCESSORS_ONLN)
+
+
 function confirm
 {
     read -p " [y/n] "
@@ -7,38 +11,85 @@ function confirm
     return
 }
 
+function qsed
+{
+    sed -e '/$1/!d;s//$2/'
+}
+
+function tolower
+{
+    tr '[:upper:]' '[:lower:]'
+}
 
 # Usage: do_cmake_build [source_folder]
 function do_cmake_build
 {
-    if [[ ! -z "$1" ]]; then
-        cd "$1"
+    # Enter the source directory
+    SRC_DIR="$1"; shift
+    if [[ ! -d "$SRC_DIR" ]]; then
+        echo "ERROR: Source directory $SRC_DIR does not exist!"
+        return
     fi
-    if [[ ! -d build ]]; then
-        mkdir build
+    cd "$SRC_DIR"; shift
+
+    # Default to a release build
+    BUILD_TYPE=release
+    if [[ "$*" == *"CMAKE_BUILD_TYPE"* ]]; then
+        BUILD_TYPE=$(echo "$*" | qsed 'CMAKE_BUILD_TYPE=([^ ]+)' '\1' | tolower)
     fi
-    cd build
+    echo "Got build type $CMAKE_BUILD_TYPE"
+
+    # Make the build directory and enter it
+    mkdir -p build/$BUILD_TYPE
+    cd build/$BUILD_TYPE
+
+    # Have we already run cmake?
     if [[ ! -d CMakeFiles ]]; then
         echo
         echo
         echo "Doing cmake build in $(pwd)"
-        echo cmake $CMAKE_FLAGS ..
-        cmake $CMAKE_FLAGS ..
+        echo cmake $* ../..
+        cmake $* ../..
         echo -n "Does this look okay?"
         if [[ -z "$SKIP_CMAKE_CONFIRMATION" ]] && ! confirm; then
+            echo "Roger that, nuking the build directory..."
             cd ..
-            rm -rf build
+            rm -rf $BUILD_TYPE
             exit
         fi
     fi
-    if ! make install -j4; then
+
+    if ! make install -j${NUM_CORES}; then
         echo "make build in $(pwd) failed"
         if [[ -z "$SKIP_AUTOCLEAN_PROMPT" ]]; then
             echo "Should I auto-clean and try again?"
             if confirm; then
                 cd ..
-                rm -rf build
-                do_cmake_build "$1"
+                rm -rf $BUILD_TYPE
+                do_cmake_build "$SRC_DIR"
+            fi
+        fi
+    fi
+}
+
+# Usage: do_autoconf_build <folder_name>
+function do_autoconf_build
+{
+    if [[ ! -z "$1" ]]; then
+        cd "$1"
+    fi
+
+    if [[ ! -f config.h ]]; then
+        ./configure $CONFIGURE_FLAGS
+    fi
+    if ! make install -j${NUM_CORES}; then
+        echo "make build in $(pwd) failed"
+        if [[ -z "$SKIP_AUTOCLEAN_PROMPT" ]]; then
+            echo "Should I auto-clean and try again?"
+            if confirm; then
+                cd ..
+                git clean -fdx
+                do_autoconf_build "$1"
             fi
         fi
     fi
