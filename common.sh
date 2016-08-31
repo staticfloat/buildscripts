@@ -30,7 +30,7 @@ function do_cmake_build
         echo "ERROR: Source directory $SRC_DIR does not exist!"
         return
     fi
-    cd "$SRC_DIR"; shift
+    cd "$SRC_DIR"
 
     # Default to a release build
     BUILD_TYPE=release
@@ -75,12 +75,15 @@ function do_cmake_build
 # Usage: do_autoconf_build <folder_name>
 function do_autoconf_build
 {
-    if [[ ! -z "$1" ]]; then
-        cd "$1"
+    SRC_DIR="$1"; shift
+    if [[ ! -d "$SRC_DIR" ]]; then
+        echo "ERROR: Source directory $SRC_DIR does not exist!"
+        return
     fi
-
+    cd "$SRC_DIR"
+    
     if [[ ! -f config.h ]]; then
-        ./configure $CONFIGURE_FLAGS
+        ./configure $*
     fi
     if ! make install -j${NUM_CORES}; then
         echo "make build in $(pwd) failed"

@@ -4,6 +4,7 @@
 source common.sh
 
 PREFIX="$(echo ~)/local"
+export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$PREFIX/lib/pkgconfig"
 
 clone_and_pull ~/src/libx264 git://git.videolan.org/x264
 clone_and_pull ~/src/libvpx https://chromium.googlesource.com/webm/libvpx
