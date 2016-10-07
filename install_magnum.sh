@@ -8,7 +8,7 @@ fi
 
 prefix=~/local
 src=~/src/magnum
-CMAKE_FLAGS="-DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_INSTALL_RPATH=$prefix/lib"
+CMAKE_FLAGS="-DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_INSTALL_RPATH=$prefix/lib -DMAGNUM_BUILD_MULTITHREADED=ON"
 for feature in SDL2APPLICATION GLFWAPPLICATION CGLCONTEXT WINDOWLESSCGLAPPLICATION AUDIO BULLET TGAIMPORTER WAVAUDIOIMPORTER DISTANCEFIELDCONVERTER OBJIMPORTER; do
     CMAKE_FLAGS="$CMAKE_FLAGS -DWITH_$feature=ON"
 done
@@ -17,7 +17,7 @@ done
 source common.sh
 
 # Install some prerequisites
-brew install git cmake sdl2 bullet freetype qt glfw3
+brew install git cmake sdl2 bullet freetype qt harfbuzz libjpeg homebrew/versions/glfw3
 
 # First, clone and update all repositories
 mkdir -p $src; cd $src
@@ -35,6 +35,9 @@ clone_and_pull magnum-examples https://github.com/mosra/magnum-examples.git
 # Start off by compiling corrade and magnum
 do_cmake_build "$src/corrade" $CMAKE_FLAGS
 do_cmake_build "$src/magnum" $CMAKE_FLAGS
+
+# Go in and symlink that stupid magnum-d directory
+ln -s $prefix/lib/magnum $prefix/lib/magnum-d
 
 # Now, compile integration and plugins
 do_cmake_build "$src/magnum-integration" $CMAKE_FLAGS
